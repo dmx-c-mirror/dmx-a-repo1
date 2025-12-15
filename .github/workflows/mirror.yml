@@ -18,13 +18,25 @@ jobs:
       - name: Setup SSH key
         env:
           SSH_PRIVATE_KEY: ${{ secrets.MIRROR_SSH_KEY }}
+          MIRROR_REPO_URL: ${{ secrets.MIRROR_REPO_URL }}
         run: |
+          if [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo "Error: MIRROR_SSH_KEY secret is not set"
+            exit 1
+          fi
+          
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H github.com >> ~/.ssh/known_hosts 2>/dev/null || true
-          # Add other hosts if needed
-          # ssh-keyscan -H gitlab.com >> ~/.ssh/known_hosts 2>/dev/null || true
+          
+          # Extract host from mirror URL and add to known_hosts
+          if [ -n "$MIRROR_REPO_URL" ]; then
+            HOST=$(echo "$MIRROR_REPO_URL" | sed -n 's/.*@\([^:]*\):.*/\1/p')
+            if [ -n "$HOST" ]; then
+              echo "Adding SSH host key for $HOST"
+              ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+            fi
+          fi
       
       - name: Configure Git
         run: |
