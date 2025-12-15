@@ -1,0 +1,58 @@
+name: Mirror to Remote Repository
+
+on:
+  push:
+    branches:
+      - '**'  # Trigger on all branches
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
+      
+      - name: Setup SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.MIRROR_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H github.com >> ~/.ssh/known_hosts 2>/dev/null || true
+          # Add other hosts if needed
+          # ssh-keyscan -H gitlab.com >> ~/.ssh/known_hosts 2>/dev/null || true
+      
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+      
+      - name: Add remote mirror repository
+        env:
+          MIRROR_REPO_URL: ${{ secrets.MIRROR_REPO_URL }}
+        run: |
+          if [ -z "$MIRROR_REPO_URL" ]; then
+            echo "Error: MIRROR_REPO_URL secret is not set"
+            exit 1
+          fi
+          git remote add mirror "$MIRROR_REPO_URL"
+      
+      - name: Push to mirror repository
+        run: |
+          echo "Pushing branch ${GITHUB_REF#refs/heads/} to mirror repository..."
+          git push mirror "${GITHUB_REF#refs/heads/}" --force
+          echo "Successfully mirrored to remote repository"
+      
+      - name: Push all tags to mirror (optional)
+        run: |
+          if git tag | grep -q .; then
+            echo "Pushing tags to mirror repository..."
+            git push mirror --tags --force
+          else
+            echo "No tags to push"
+          fi
+        continue-on-error: true
