@@ -3,9 +3,8 @@ name: Mirror to Remote Repository
 on:
   push:
     branches:
-      - '**'  # Trigger on all branches
-  workflow_dispatch: # Allow manual trigger
+      - '**'
 
 jobs:
   mirror:
-    uses: ./.github/workflows/mirror-reusable.yml
+    uses: dmx-a/reusable-workflows/.github/workflows/mirror-reusable.yml@main
