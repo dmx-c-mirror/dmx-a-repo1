@@ -8,3 +8,4 @@ on:
 jobs:
   mirror:
     uses: dmx-a/reusable-workflows/.github/workflows/mirror-reusable.yml@main
+    secrets: inherit
