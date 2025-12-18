@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - '**'
+  delete:  # Trigger when branches or tags are deleted
 
 jobs:
   mirror:
