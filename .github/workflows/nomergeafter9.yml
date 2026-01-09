@@ -1,0 +1,19 @@
+name: "Deny PRs After 21 CET"
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  deny-after-21-cet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail PR if after 21:00 CET
+        run: |
+          hour=$(TZ="Europe/Berlin" date +'%H')
+          if [ "$hour" -ge 21 ]; then
+            echo "PRs cannot be created or updated after 21:00 CET."
+            exit 1
+          else
+            echo "It is before 21:00 CET. Workflow successful."
+          fi
