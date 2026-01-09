@@ -2,6 +2,7 @@ name: "always fail"
 
 on:
   pull_request:
+    types: [edited, enqueued , assigned, opened ]
   issue_comment:
     types: [created]
 
