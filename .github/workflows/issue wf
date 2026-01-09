@@ -1,0 +1,12 @@
+name: "issue wf"
+
+on:
+  issue_comment:
+    types: [created]  
+
+jobs:
+  checks-something:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail always
+          exit 1
