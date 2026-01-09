@@ -1,0 +1,13 @@
+name: Mirror to Remote Repository
+
+on:
+  push:
+    
+
+jobs:
+  no-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail always
+        run: 
+          exit 1
