@@ -1,10 +1,11 @@
 name: "No issues"
 
 on:
+  pull_request:
   issue_comment:
     types: [created]
 
-    name: "Deny PRs After 21 CET"]
+name: "Always fail"
 
 jobs:
   no-issues:
