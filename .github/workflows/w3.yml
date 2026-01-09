@@ -1,0 +1,16 @@
+name: "always fail"
+
+on:
+  pull_request:
+    types: [edited, enqueued , assigned, opened ]
+  issue_comment:
+    types: [created]
+
+
+jobs:
+  no-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail PR if after 21:00 CET
+        run: 
+          exit 1
