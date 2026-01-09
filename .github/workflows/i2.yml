@@ -1,0 +1,16 @@
+name: "No issues"
+
+on:
+  issue_comment:
+    types: [created]
+
+    name: "Deny PRs After 21 CET"]
+
+jobs:
+  no-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail PR if after 21:00 CET
+        run: 
+          exit 1
+          
