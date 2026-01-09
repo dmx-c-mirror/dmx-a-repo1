@@ -3,6 +3,8 @@ name: "xxx"
 on:
   issues: 
     types: edited
+  pull_request:
+  
     
 jobs:
   deny-after-21-cet:
